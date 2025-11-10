@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { MonthlyView } from './MonthlyView';
 import { WeeklyView } from './WeeklyView';
@@ -28,15 +27,11 @@ export const CalendarPreview: React.FC<CalendarPreviewProps> = ({
         return (
           <div 
             key={i}
-            className="printable-calendar-page bg-paper-white shadow-lg rounded-sm aspect-[1.414/1] w-full max-w-4xl mx-auto p-8 md:p-12 flex flex-col"
+            className="printable-calendar-page relative bg-paper-white shadow-lg rounded-sm aspect-[1.414/1] w-full max-w-4xl mx-auto p-8 md:p-12 flex flex-col"
             style={{
                 boxShadow: '0 4px 6px rgba(0,0,0,0.05), 0 10px 20px rgba(0,0,0,0.05)'
             }}
           >
-            <div className="h-1/5 border-b-2 border-gray-100 mb-4">
-              {/* This is the "blank space for writing" */}
-            </div>
-            
             {viewType === 'monthly' ? (
               <MonthlyView date={pageDate} events={events} />
             ) : (
@@ -44,7 +39,7 @@ export const CalendarPreview: React.FC<CalendarPreviewProps> = ({
             )}
 
             {logo && (
-              <div className="mt-auto pt-4 flex justify-end">
+              <div className="absolute bottom-8 right-8 md:bottom-12 md:right-12 z-20">
                 <img src={logo} alt="Logo" className="max-h-12 max-w-xs object-contain" />
               </div>
             )}

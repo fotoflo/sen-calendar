@@ -1,11 +1,14 @@
-import React, { useState, useCallback, useRef } from 'react';
+
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { addMonths, addWeeks } from 'date-fns';
-import { jsPDF } from 'jspdf';
-import html2canvas from 'html2canvas';
 import { ControlPanel } from './components/ControlPanel';
 import { CalendarPreview } from './components/CalendarPreview';
 import { ViewType, CalendarEvent } from './types';
 import { MOCK_EVENTS, ICONS } from './constants';
+
+declare const IcalExpander: any;
+
+const LOGO_STORAGE_KEY = 'printableCalendarLogo';
 
 const App: React.FC = () => {
   const [viewType, setViewType] = useState<ViewType>('monthly');
@@ -15,87 +18,94 @@ const App: React.FC = () => {
   const [isCalendarConnected, setIsCalendarConnected] = useState<boolean>(false);
   const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [selectedCalendar, setSelectedCalendar] = useState<string>('janes-calendar');
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
   
-  const handleConnectCalendar = useCallback(() => {
+  useEffect(() => {
+    const savedLogo = localStorage.getItem(LOGO_STORAGE_KEY);
+    if (savedLogo) {
+      setLogo(savedLogo);
+    }
+  }, []);
+
+  const handleConnectCalendar = useCallback(async (url: string) => {
+    if (!url) return;
     setIsLoading(true);
-    setTimeout(() => {
+    try {
+      // Using a CORS proxy to fetch calendar data
+      const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+      const response = await fetch(proxyUrl);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch calendar: ${response.statusText}`);
+      }
+      const icsData = await response.text();
+
+      const icalExpander = new IcalExpander({ ics: icsData, maxIterations: 1000 });
+      const now = new Date();
+      // Fetch events for a wide range, e.g., 6 months before and after today.
+      const rangeStart = new Date(now.getFullYear(), now.getMonth() - 6, 1);
+      const rangeEnd = new Date(now.getFullYear(), now.getMonth() + 6, 31);
+      
+      const calendarData = icalExpander.getEvents(rangeStart, rangeEnd);
+
+      const formattedEvents: CalendarEvent[] = calendarData.events.map((event: any) => ({
+        id: event.uid,
+        title: event.summary,
+        start: event.startDate.toJSDate(),
+        end: event.endDate.toJSDate(),
+      })).concat(calendarData.occurrences.map((occurrence: any) => ({
+        id: `${occurrence.item.uid}-${occurrence.startDate.toJSDate().toISOString()}`,
+        title: occurrence.item.summary,
+        start: occurrence.startDate.toJSDate(),
+        end: occurrence.endDate.toJSDate(),
+      })));
+      
+      setCalendarEvents(formattedEvents);
       setIsCalendarConnected(true);
-      setCalendarEvents(MOCK_EVENTS);
+    } catch (error) {
+      console.error("Failed to parse iCal data:", error);
+      alert("Could not load calendar. Please check the URL and ensure it's a valid iCal/.ics link.");
+      setIsCalendarConnected(false);
+      setCalendarEvents([]);
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
+  }, []);
+
+  const handleDisconnectCalendar = useCallback(() => {
+    setIsCalendarConnected(false);
+    setCalendarEvents([]);
   }, []);
 
   const handleLogoUpload = useCallback((file: File) => {
     const reader = new FileReader();
     reader.onloadend = () => {
-      setLogo(reader.result as string);
+      const result = reader.result as string;
+      setLogo(result);
+      localStorage.setItem(LOGO_STORAGE_KEY, result);
     };
     reader.readAsDataURL(file);
   }, []);
 
-  const handleExportPdf = useCallback(async () => {
-    setIsLoading(true);
-    setIsSettingsOpen(false); // Close settings before exporting
-    
-    // Allow UI to update before starting heavy task
-    await new Promise(resolve => setTimeout(resolve, 100));
+  const handleRemoveLogo = useCallback(() => {
+    setLogo(null);
+    localStorage.removeItem(LOGO_STORAGE_KEY);
+  }, []);
 
-    const pdf = new jsPDF('l', 'mm', 'a4');
-    const pageElements = document.querySelectorAll<HTMLElement>('.printable-calendar-page');
-    
-    for (let i = 0; i < pageElements.length; i++) {
-      const element = pageElements[i];
-      const canvas = await html2canvas(element, {
-          scale: 3,
-          useCORS: true,
-          logging: false,
-      });
-      
-      const imgData = canvas.toDataURL('image/png');
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
-      
-      const canvasWidth = canvas.width;
-      const canvasHeight = canvas.height;
-      
-      const ratio = canvasWidth / canvasHeight;
-      const pdfRatio = pdfWidth / pdfHeight;
-      
-      let imgWidth, imgHeight;
-
-      if(ratio > pdfRatio){
-          imgWidth = pdfWidth;
-          imgHeight = pdfWidth / ratio;
-      } else {
-          imgHeight = pdfHeight;
-          imgWidth = pdfHeight * ratio;
-      }
-      
-      const x = (pdfWidth - imgWidth) / 2;
-      const y = (pdfHeight - imgHeight) / 2;
-      
-      if (i > 0) {
-        pdf.addPage();
-      }
-      pdf.addImage(imgData, 'PNG', x, y, imgWidth, imgHeight);
-    }
-    
-    pdf.save('calendar.pdf');
-    setIsLoading(false);
+  const handleExportPdf = useCallback(() => {
+    window.print();
   }, []);
 
   const addDate = viewType === 'monthly' ? addMonths : addWeeks;
 
   const controlPanelProps = {
-    viewType, setViewType,
     startDate, setStartDate,
-    printRange, setPrintRange,
-    logo, onLogoUpload: handleLogoUpload,
-    isCalendarConnected, onConnectCalendar: handleConnectCalendar,
+    logo, 
+    onLogoUpload: handleLogoUpload,
+    onRemoveLogo: handleRemoveLogo,
+    isCalendarConnected, 
+    onConnectCalendar: handleConnectCalendar,
+    onDisconnectCalendar: handleDisconnectCalendar,
     onExportPdf: handleExportPdf,
-    selectedCalendar, setSelectedCalendar,
   };
 
   return (
@@ -107,15 +117,66 @@ const App: React.FC = () => {
       )}
 
       <header className="p-4 md:px-8 md:py-6 flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-800">Printable Calendar</h1>
-        <button
-          id="settings-button"
-          onClick={() => setIsSettingsOpen(true)}
-          className="p-2 bg-paper-white rounded-full shadow-md hover:bg-gray-200 transition-colors z-30"
-          aria-label="Open settings"
-        >
-          {React.cloneElement(ICONS.GEAR, { className: "w-6 h-6 text-gray-600"})}
-        </button>
+        <div className="flex-shrink-0 h-8 flex items-center">
+          {logo ? (
+            <img src={logo} alt="Logo" className="max-h-full object-contain" />
+          ) : (
+            <h1 className="text-xl md:text-2xl font-bold text-gray-800">Printable Calendar</h1>
+          )}
+        </div>
+        <div className="flex items-center gap-2 md:gap-4">
+          <div className="flex items-center bg-gray-200 rounded-lg p-0.5">
+            {(['monthly', 'weekly'] as ViewType[]).map((v) => (
+              <button
+                key={v}
+                onClick={() => setViewType(v)}
+                className={`px-3 md:px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                  viewType === v
+                    ? 'bg-white shadow-sm text-gray-900'
+                    : 'bg-transparent text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                {v.charAt(0).toUpperCase() + v.slice(1)}
+              </button>
+            ))}
+          </div>
+
+          <div className="relative">
+            <select
+              value={printRange}
+              onChange={(e) => setPrintRange(Number(e.target.value))}
+              className="bg-white shadow-sm text-gray-900 text-sm rounded-lg focus:ring-lipstick-red focus:border-lipstick-red block w-full py-1.5 pl-3 pr-8 appearance-none"
+              aria-label="Select print range"
+            >
+              {[...Array(12)].map((_, i) => (
+                <option key={i + 1} value={i + 1}>
+                  {i + 1} {viewType === 'monthly' ? 'Month' : 'Week'}{i > 0 ? 's' : ''}
+                </option>
+              ))}
+            </select>
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+              {React.cloneElement(ICONS.CHEVRON_DOWN, { className: "w-4 h-4" })}
+            </div>
+          </div>
+          
+          <button
+            onClick={handleExportPdf}
+            className="flex items-center gap-2 bg-lipstick-red text-white font-semibold py-1.5 px-4 rounded-lg hover:opacity-90 transition-opacity text-sm shadow-sm"
+            aria-label="Print calendar"
+          >
+            {React.cloneElement(ICONS.PRINT, { className: "w-4 h-4" })}
+            <span>Print</span>
+          </button>
+
+          <button
+            id="settings-button"
+            onClick={() => setIsSettingsOpen(true)}
+            className="p-2 bg-paper-white rounded-full shadow-md hover:bg-gray-200 transition-colors z-30"
+            aria-label="Open settings"
+          >
+            {React.cloneElement(ICONS.GEAR, { className: "w-6 h-6 text-gray-600"})}
+          </button>
+        </div>
       </header>
 
       <div 

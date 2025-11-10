@@ -1,21 +1,17 @@
-import React, { useRef } from 'react';
-import { ViewType } from '../types';
+
+import React, { useRef, useState } from 'react';
 import { ICONS } from '../constants';
 
 interface ControlPanelProps {
-  viewType: ViewType;
-  setViewType: (view: ViewType) => void;
   startDate: Date;
   setStartDate: (date: Date) => void;
-  printRange: number;
-  setPrintRange: (range: number) => void;
   logo: string | null;
   onLogoUpload: (file: File) => void;
+  onRemoveLogo: () => void;
   isCalendarConnected: boolean;
-  onConnectCalendar: () => void;
+  onConnectCalendar: (url: string) => void;
+  onDisconnectCalendar: () => void;
   onExportPdf: () => void;
-  selectedCalendar: string;
-  setSelectedCalendar: (cal: string) => void;
   onClose: () => void;
 }
 
@@ -27,22 +23,19 @@ const ControlOption: React.FC<{ title: string; children: React.ReactNode }> = ({
 );
 
 export const ControlPanel: React.FC<ControlPanelProps> = ({
-  viewType,
-  setViewType,
   startDate,
   setStartDate,
-  printRange,
-  setPrintRange,
   logo,
   onLogoUpload,
+  onRemoveLogo,
   isCalendarConnected,
   onConnectCalendar,
+  onDisconnectCalendar,
   onExportPdf,
-  selectedCalendar,
-  setSelectedCalendar,
   onClose
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [calendarUrl, setCalendarUrl] = useState('');
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -70,66 +63,36 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
       <div className="p-4 space-y-5 overflow-y-auto flex-grow">
         <ControlOption title="Calendar Source">
           {isCalendarConnected ? (
-            <div className="relative">
-              <select
-                value={selectedCalendar}
-                onChange={(e) => setSelectedCalendar(e.target.value)}
-                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-lipstick-red focus:border-lipstick-red block p-2 appearance-none"
+            <div className="space-y-2">
+              <p className="text-sm text-center text-green-700 bg-green-100 p-2 rounded-lg border border-green-200">
+                ✓ Calendar Connected
+              </p>
+              <button
+                onClick={onDisconnectCalendar}
+                className="w-full text-sm text-gray-500 hover:text-lipstick-red transition-colors"
               >
-                <option value="janes-calendar">Jane's Calendar</option>
-                <option value="work-calendar">Work Calendar</option>
-                <option value="personal-projects">Personal Projects</option>
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                  {React.cloneElement(ICONS.CHEVRON_DOWN, { className: "w-4 h-4" })}
-              </div>
+                Disconnect
+              </button>
             </div>
           ) : (
-            <button
-              onClick={onConnectCalendar}
-              className="w-full flex items-center justify-center gap-2 bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors text-sm"
-            >
-              {React.cloneElement(ICONS.GOOGLE, { className: "w-4 h-4" })}
-              Connect Google Calendar
-            </button>
+            <div className="space-y-2">
+                <input 
+                    type="url"
+                    placeholder="Paste iCal/.ics link"
+                    value={calendarUrl}
+                    onChange={e => setCalendarUrl(e.target.value)}
+                    className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-lipstick-red focus:border-lipstick-red block p-2"
+                />
+                <button
+                    onClick={() => onConnectCalendar(calendarUrl)}
+                    className="w-full flex items-center justify-center gap-2 bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg hover:bg-gray-800 transition-colors text-sm disabled:opacity-50"
+                    disabled={!calendarUrl}
+                >
+                    {React.cloneElement(ICONS.GOOGLE, { className: "w-4 h-4" })}
+                    Load Calendar
+                </button>
+            </div>
           )}
-        </ControlOption>
-
-        <ControlOption title="View Type">
-          <div className="flex gap-2">
-            {(['monthly', 'weekly'] as ViewType[]).map((v) => (
-              <button
-                key={v}
-                onClick={() => setViewType(v)}
-                className={`flex-1 py-1.5 px-3 rounded-md text-xs font-medium transition-colors ${
-                  viewType === v
-                    ? 'bg-gray-800 text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                {v.charAt(0).toUpperCase() + v.slice(1)}
-              </button>
-            ))}
-          </div>
-        </ControlOption>
-
-        <ControlOption title="Print Range">
-          <div className="relative">
-              <select
-                value={printRange}
-                onChange={(e) => setPrintRange(Number(e.target.value))}
-                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-lipstick-red focus:border-lipstick-red block p-2 appearance-none"
-              >
-                {[...Array(12)].map((_, i) => (
-                  <option key={i + 1} value={i + 1}>
-                    Next {i + 1} {viewType === 'monthly' ? 'Month' : 'Week'}{i > 0 ? 's' : ''}
-                  </option>
-                ))}
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                  {React.cloneElement(ICONS.CHEVRON_DOWN, { className: "w-4 h-4" })}
-              </div>
-          </div>
         </ControlOption>
 
         <ControlOption title="Start Date">
@@ -157,7 +120,18 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
               onChange={handleFileChange}
               className="hidden"
             />
-            {logo && <img src={logo} alt="Logo Preview" className="w-10 h-10 object-contain border border-gray-200 p-1 rounded-md" />}
+            {logo && (
+              <div className="relative group">
+                <img src={logo} alt="Logo Preview" className="w-10 h-10 object-contain border border-gray-200 p-1 rounded-md" />
+                <button 
+                  onClick={onRemoveLogo} 
+                  className="absolute -top-1.5 -right-1.5 bg-lipstick-red text-white rounded-full w-5 h-5 flex items-center justify-center text-sm font-bold leading-none opacity-0 group-hover:opacity-100 transition-opacity"
+                  aria-label="Remove logo"
+                >
+                  &times;
+                </button>
+              </div>
+            )}
           </div>
         </ControlOption>
       </div>

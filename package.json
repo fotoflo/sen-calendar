@@ -11,9 +11,7 @@
   "dependencies": {
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "date-fns": "^4.1.0",
-    "html2canvas": "^1.4.1",
-    "jspdf": "^3.0.3"
+    "date-fns": "^4.1.0"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

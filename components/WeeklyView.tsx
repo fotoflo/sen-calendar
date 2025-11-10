@@ -14,11 +14,11 @@ interface WeeklyViewProps {
   events: CalendarEvent[];
 }
 
-const DayColumn: React.FC<{ day: Date, events: CalendarEvent[] }> = ({ day, events }) => {
+const DayColumn: React.FC<{ day: Date, events: CalendarEvent[], className?: string }> = ({ day, events, className }) => {
   const dayEvents = events.filter(event => isSameDay(event.start, day));
 
   return (
-    <div className="border-r border-gray-100 p-3 flex flex-col">
+    <div className={`p-3 flex flex-col ${className}`}>
       <div className="text-center mb-2">
         <p className="text-sm text-muted">{format(day, 'EEE')}</p>
         <p className="text-2xl font-medium text-gray-700">{format(day, 'd')}</p>
@@ -41,6 +41,8 @@ export const WeeklyView: React.FC<WeeklyViewProps> = ({ date, events }) => {
   const weekEnd = endOfWeek(date);
   
   const days = eachDayOfInterval({ start: weekStart, end: weekEnd });
+  const topRowDays = days.slice(0, 3);
+  const bottomRowDays = days.slice(3, 7);
 
   return (
     <div className="flex flex-col flex-grow">
@@ -50,14 +52,27 @@ export const WeeklyView: React.FC<WeeklyViewProps> = ({ date, events }) => {
         </h2>
         <h3 className="text-3xl font-light text-gray-400">{format(date, 'yyyy')}</h3>
       </div>
-      <div className="grid grid-cols-7 flex-grow">
-        {days.map((day) => (
-          <DayColumn 
-            key={day.toString()} 
-            day={day}
-            events={events}
-          />
-        ))}
+      <div className="flex flex-col flex-grow border-l border-t border-gray-100">
+        <div className="grid grid-cols-3 flex-grow">
+          {topRowDays.map((day) => (
+            <DayColumn 
+              key={day.toString()} 
+              day={day}
+              events={events}
+              className="border-r border-b border-gray-100"
+            />
+          ))}
+        </div>
+        <div className="grid grid-cols-4 flex-grow">
+          {bottomRowDays.map((day) => (
+            <DayColumn 
+              key={day.toString()} 
+              day={day}
+              events={events}
+              className="border-r border-b border-gray-100"
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
