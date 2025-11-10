@@ -1,0 +1,5 @@
+{
+  "name": "Muji-Style Printable Calendar",
+  "description": "A minimalist, Muji-inspired web application to connect your Google Calendar and generate beautiful, print-ready monthly or weekly calendar pages. Customize views, date ranges, and add your own logo for a personalized, elegant planner.",
+  "requestFramePermissions": []
+}
