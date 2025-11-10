@@ -9,6 +9,7 @@ import { MOCK_EVENTS, ICONS } from './constants';
 declare const IcalExpander: any;
 
 const LOGO_STORAGE_KEY = 'printableCalendarLogo';
+const CALENDAR_URL_STORAGE_KEY = 'printableCalendarUrl';
 
 const App: React.FC = () => {
   const [viewType, setViewType] = useState<ViewType>('monthly');
@@ -19,14 +20,8 @@ const App: React.FC = () => {
   const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
+  const [calendarUrl, setCalendarUrl] = useState('');
   
-  useEffect(() => {
-    const savedLogo = localStorage.getItem(LOGO_STORAGE_KEY);
-    if (savedLogo) {
-      setLogo(savedLogo);
-    }
-  }, []);
-
   const handleConnectCalendar = useCallback(async (url: string) => {
     if (!url) return;
     setIsLoading(true);
@@ -61,19 +56,35 @@ const App: React.FC = () => {
       
       setCalendarEvents(formattedEvents);
       setIsCalendarConnected(true);
+      localStorage.setItem(CALENDAR_URL_STORAGE_KEY, url);
     } catch (error) {
       console.error("Failed to parse iCal data:", error);
       alert("Could not load calendar. Please check the URL and ensure it's a valid iCal/.ics link.");
       setIsCalendarConnected(false);
       setCalendarEvents([]);
+      localStorage.removeItem(CALENDAR_URL_STORAGE_KEY);
     } finally {
       setIsLoading(false);
     }
   }, []);
+  
+  useEffect(() => {
+    const savedLogo = localStorage.getItem(LOGO_STORAGE_KEY);
+    if (savedLogo) {
+      setLogo(savedLogo);
+    }
+    const savedUrl = localStorage.getItem(CALENDAR_URL_STORAGE_KEY);
+    if (savedUrl) {
+      setCalendarUrl(savedUrl);
+      handleConnectCalendar(savedUrl);
+    }
+  }, [handleConnectCalendar]);
 
   const handleDisconnectCalendar = useCallback(() => {
     setIsCalendarConnected(false);
     setCalendarEvents([]);
+    setCalendarUrl('');
+    localStorage.removeItem(CALENDAR_URL_STORAGE_KEY);
   }, []);
 
   const handleLogoUpload = useCallback((file: File) => {
@@ -91,9 +102,9 @@ const App: React.FC = () => {
     localStorage.removeItem(LOGO_STORAGE_KEY);
   }, []);
 
-  const handleExportPdf = useCallback(() => {
+  const handleExportPdf = () => {
     window.print();
-  }, []);
+  };
 
   const addDate = viewType === 'monthly' ? addMonths : addWeeks;
 
@@ -106,6 +117,8 @@ const App: React.FC = () => {
     onConnectCalendar: handleConnectCalendar,
     onDisconnectCalendar: handleDisconnectCalendar,
     onExportPdf: handleExportPdf,
+    calendarUrl,
+    setCalendarUrl,
   };
 
   return (

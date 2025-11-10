@@ -1,5 +1,5 @@
 
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { ICONS } from '../constants';
 
 interface ControlPanelProps {
@@ -13,6 +13,8 @@ interface ControlPanelProps {
   onDisconnectCalendar: () => void;
   onExportPdf: () => void;
   onClose: () => void;
+  calendarUrl: string;
+  setCalendarUrl: (url: string) => void;
 }
 
 const ControlOption: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
@@ -32,10 +34,11 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   onConnectCalendar,
   onDisconnectCalendar,
   onExportPdf,
-  onClose
+  onClose,
+  calendarUrl,
+  setCalendarUrl
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [calendarUrl, setCalendarUrl] = useState('');
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -56,7 +59,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
       <div className="p-4 border-b border-gray-200 flex justify-between items-center flex-shrink-0">
         <h2 className="text-lg font-bold text-gray-800">Settings & Export</h2>
         <button onClick={onClose} className="text-gray-400 hover:text-gray-800 p-1 rounded-full -mr-1">
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
       </div>
 
