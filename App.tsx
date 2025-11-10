@@ -3,7 +3,7 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { addMonths, addWeeks } from 'date-fns';
 import { ControlPanel } from './components/ControlPanel';
 import { CalendarPreview } from './components/CalendarPreview';
-import { ViewType, CalendarEvent } from './types';
+import { ViewType, CalendarEvent, PaperSize } from './types';
 import { MOCK_EVENTS, ICONS } from './constants';
 
 declare const IcalExpander: any;
@@ -21,6 +21,7 @@ const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
   const [calendarUrl, setCalendarUrl] = useState('');
+  const [paperSize, setPaperSize] = useState<PaperSize>('a4');
   
   const handleConnectCalendar = useCallback(async (url: string) => {
     if (!url) return;
@@ -171,6 +172,21 @@ const App: React.FC = () => {
               {React.cloneElement(ICONS.CHEVRON_DOWN, { className: "w-4 h-4" })}
             </div>
           </div>
+
+          <div className="relative">
+            <select
+              value={paperSize}
+              onChange={(e) => setPaperSize(e.target.value as PaperSize)}
+              className="bg-white shadow-sm text-gray-900 text-sm rounded-lg focus:ring-lipstick-red focus:border-lipstick-red block w-full py-1.5 pl-3 pr-8 appearance-none"
+              aria-label="Select paper size"
+            >
+              <option value="a4">A4</option>
+              <option value="letter">Letter</option>
+            </select>
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+              {React.cloneElement(ICONS.CHEVRON_DOWN, { className: "w-4 h-4" })}
+            </div>
+          </div>
           
           <button
             onClick={handleExportPdf}
@@ -205,15 +221,16 @@ const App: React.FC = () => {
         </div>
       </div>
 
-      <main className="px-4 pb-4 md:px-8 md:pb-8">
+      <main className={`px-4 pb-4 md:px-8 md:pb-8 view-${viewType}`}>
         <CalendarPreview
-          key={`${viewType}-${startDate.toISOString()}-${printRange}-${logo}-${isCalendarConnected}`}
+          key={`${viewType}-${startDate.toISOString()}-${printRange}-${logo}-${isCalendarConnected}-${paperSize}`}
           viewType={viewType}
           startDate={startDate}
           printRange={printRange}
           logo={logo}
           events={calendarEvents}
           addDate={addDate}
+          paperSize={paperSize}
         />
       </main>
     </div>

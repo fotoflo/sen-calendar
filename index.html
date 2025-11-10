@@ -31,12 +31,14 @@
         body {
           -webkit-print-color-adjust: exact;
           print-color-adjust: exact;
+          background-color: white !important;
         }
         header, #settings-modal-overlay {
           display: none !important;
         }
         main {
           padding: 0 !important;
+          margin: 0 !important;
         }
         #preview-container {
           margin: 0 !important;
@@ -46,9 +48,45 @@
         }
         .printable-calendar-page {
           box-shadow: none !important;
-          border: none !important;
           break-after: page;
           page-break-after: always;
+          position: absolute;
+          top: 0;
+          left: 0;
+          border: none !important;
+        }
+
+        /* Remove gray colors and internal borders */
+        .printable-calendar-page .bg-gray-50, .printable-calendar-page .bg-gray-100 {
+            background-color: transparent !important;
+        }
+        .printable-calendar-page .border-gray-100,
+        .printable-calendar-page .border-gray-200,
+        .printable-calendar-page .border-t,
+        .printable-calendar-page .border-r,
+        .printable-calendar-page .border-b,
+        .printable-calendar-page .border-b-2 {
+            border-color: transparent !important;
+        }
+        .printable-calendar-page .text-muted {
+            color: #444 !important; /* Make muted text darker for print */
+        }
+        .printable-calendar-page .text-gray-400 {
+            color: #666 !important;
+        }
+
+        .view-monthly .printable-calendar-page {
+            width: calc(100% / 0.9);
+            height: calc(100% / 0.9);
+            transform: scale(0.9);
+            transform-origin: top left;
+        }
+
+        .view-weekly .printable-calendar-page {
+            width: calc(100% / 1.8);
+            height: calc(100% / 1.8);
+            transform: scale(1.8);
+            transform-origin: top left;
         }
       }
     </style>
