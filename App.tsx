@@ -74,6 +74,9 @@ const App: React.FC = () => {
     const savedLogo = localStorage.getItem(LOGO_STORAGE_KEY);
     if (savedLogo) {
       setLogo(savedLogo);
+    } else {
+      // Set default logo if no saved logo exists
+      setLogo('/default-logo.png'); // Place your logo file in the public directory
     }
     const savedUrl = localStorage.getItem(CALENDAR_URL_STORAGE_KEY);
     if (savedUrl) {
