@@ -15,6 +15,7 @@ import { CalendarEvent } from '../types';
 interface MonthlyViewProps {
   date: Date;
   events: CalendarEvent[];
+  logo: string | null;
 }
 
 const DayCell: React.FC<{ day: Date; isCurrentMonth: boolean; events: CalendarEvent[] }> = ({ day, isCurrentMonth, events }) => {
@@ -36,20 +37,25 @@ const DayCell: React.FC<{ day: Date; isCurrentMonth: boolean; events: CalendarEv
   );
 };
 
-export const MonthlyView: React.FC<MonthlyViewProps> = ({ date, events }) => {
+export const MonthlyView: React.FC<MonthlyViewProps> = ({ date, events, logo }) => {
   const monthStart = startOfMonth(date);
   const monthEnd = endOfMonth(date);
-  const startDate = startOfWeek(monthStart, { weekStartsOn: 1 });
-  const endDate = endOfWeek(monthEnd, { weekStartsOn: 1 });
+  const startDate = startOfWeek(monthStart);
+  const endDate = endOfWeek(monthEnd);
   
   const days = eachDayOfInterval({ start: startDate, end: endDate });
-  const weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   return (
     <div className="flex flex-col flex-grow">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-3xl font-light text-gray-800 tracking-wide">{format(date, 'MMMM')}</h2>
-        <h3 className="text-3xl font-light text-gray-400">{format(date, 'yyyy')}</h3>
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-baseline gap-2">
+          <h2 className="text-xl font-light text-gray-800 tracking-wide">{format(date, 'MMMM')}</h2>
+          <h3 className="text-xl font-light text-gray-400">{format(date, 'yyyy')}</h3>
+        </div>
+        {logo && (
+            <img src={logo} alt="Logo" className="max-h-8 object-contain" />
+        )}
       </div>
       <div className="grid grid-cols-7 flex-grow">
         {weekdays.map(day => (
