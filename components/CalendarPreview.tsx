@@ -33,20 +33,14 @@ export const CalendarPreview: React.FC<CalendarPreviewProps> = ({
   addDate,
   paperSize,
 }) => {
-  const orientation = viewType === 'monthly' ? 'landscape' : 'portrait';
+  const orientation = 'landscape';
   const aspectRatio = paperStyles[paperSize][orientation];
 
   const pageStyle: React.CSSProperties = {
     boxShadow: '0 4px 6px rgba(0,0,0,0.05), 0 10px 20px rgba(0,0,0,0.05)',
     aspectRatio,
+    width: 'min(90vw, 1123px)',
   };
-
-  if (orientation === 'landscape') {
-    pageStyle.width = 'min(90vw, 1123px)';
-  } else { // portrait
-    pageStyle.width = `calc(min(85vh, 1056px) * ${aspectRatio})`;
-    pageStyle.maxWidth = '90vw';
-  }
 
   return (
     <div id="preview-container" className="space-y-8 flex flex-col items-center">
