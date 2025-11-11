@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
   format,
@@ -13,7 +12,6 @@ interface WeeklyViewProps {
   date: Date;
   events: CalendarEvent[];
   layout: WeeklyLayout;
-  logo: string | null;
 }
 
 const DayBox: React.FC<{ day: Date, events: CalendarEvent[] }> = ({ day, events }) => {
@@ -41,7 +39,7 @@ const DayBox: React.FC<{ day: Date, events: CalendarEvent[] }> = ({ day, events 
   );
 };
 
-export const WeeklyView: React.FC<WeeklyViewProps> = ({ date, events, layout, logo }) => {
+export const WeeklyView: React.FC<WeeklyViewProps> = ({ date, events, layout }) => {
   const weekStart = startOfWeek(date, { weekStartsOn: 1 });
   const weekEnd = endOfWeek(date, { weekStartsOn: 1 });
   
@@ -58,27 +56,22 @@ export const WeeklyView: React.FC<WeeklyViewProps> = ({ date, events, layout, lo
 
   return (
     <div className="flex flex-col flex-grow">
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex items-baseline gap-2">
-            <h2 className="text-xl font-light text-gray-800 tracking-wide">
-            Week of {format(weekStart, 'MMMM d')}
-            </h2>
-            <h3 className="text-xl font-light text-gray-400">{format(date, 'yyyy')}</h3>
-        </div>
-        {logo && (
-            <img src={logo} alt="Logo" className="max-h-8 object-contain" />
-        )}
+      <div className="flex items-baseline justify-between mb-4">
+        <h2 className="text-3xl font-light text-gray-800 tracking-wide">
+          Week of {format(weekStart, 'MMMM d')}
+        </h2>
+        <h3 className="text-3xl font-light text-gray-400">{format(date, 'yyyy')}</h3>
       </div>
       
       <div className="grid grid-rows-2 flex-grow border border-gray-200">
-        <div className={`grid ${topRowCols} border-b border-gray-200`}>
+        <div className={`grid ${topRowCols} border-b border-gray-200 h-full`}>
           {topRowDays.map((day, index) => (
             <div key={day.toString()} className={`h-full ${index < topRowDays.length - 1 ? 'border-r border-gray-200' : ''}`}>
               <DayBox day={day} events={events} />
             </div>
           ))}
         </div>
-        <div className={`grid ${bottomRowCols}`}>
+        <div className={`grid ${bottomRowCols} h-full`}>
           {bottomRowDays.map((day, index) => (
             <div key={day.toString()} className={`h-full ${index < bottomRowDays.length - 1 ? 'border-r border-gray-200' : ''}`}>
               <DayBox day={day} events={events} />
