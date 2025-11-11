@@ -26,9 +26,9 @@ const DayBox: React.FC<{ day: Date, events: CalendarEvent[] }> = ({ day, events 
           {format(day, 'd')}
         </p>
       </div>
-      <div className="mt-1 space-y-2 overflow-y-auto flex-grow border-t border-gray-200 pt-2">
+      <div className="mt-1 space-y-2 overflow-y-auto flex-grow border-t border-sakura-pink/40 pt-2">
          {dayEvents.map(event => (
-            <div key={event.id} className="text-xs bg-gray-100 p-2 rounded-md">
+            <div key={event.id} className="text-xs bg-sakura-pink/25 text-gray-700 p-2 rounded-md border border-sakura-pink/40">
               <p className="font-semibold">{event.title}</p>
               {!(event.start.getHours() === 0 && event.start.getMinutes() === 0) &&
                 <p className="text-gray-500">{format(event.start, 'p')}</p>
@@ -57,7 +57,7 @@ export const WeeklyView: React.FC<WeeklyViewProps> = ({ date, events, layout, lo
 
   return (
     <div className="flex flex-col flex-grow">
-      <div className="flex items-center justify-between mb-2">
+      <div className="flex items-center justify-between mb-2 pb-2 border-b border-sakura-pink/40">
         <div className="flex items-baseline gap-2">
             <h2 className="text-xl font-light text-gray-800 tracking-wide">
             Week of {format(weekStart, 'MMMM d')}

@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React from "react";
 import {
   format,
   startOfMonth,
@@ -8,9 +7,9 @@ import {
   endOfWeek,
   eachDayOfInterval,
   isSameMonth,
-  isSameDay
-} from 'date-fns';
-import { CalendarEvent } from '../types';
+  isSameDay,
+} from "date-fns";
+import { CalendarEvent } from "../types";
 
 interface MonthlyViewProps {
   date: Date;
@@ -18,54 +17,80 @@ interface MonthlyViewProps {
   logo: string | null;
 }
 
-const DayCell: React.FC<{ day: Date; isCurrentMonth: boolean; events: CalendarEvent[] }> = ({ day, isCurrentMonth, events }) => {
-  const dayEvents = events.filter(event => isSameDay(event.start, day));
+const DayCell: React.FC<{
+  day: Date;
+  isCurrentMonth: boolean;
+  events: CalendarEvent[];
+}> = ({ day, isCurrentMonth, events }) => {
+  const dayEvents = events.filter((event) => isSameDay(event.start, day));
 
   return (
-    <div className={`border-t border-r border-gray-100 p-2 flex flex-col h-full ${isCurrentMonth ? '' : 'bg-gray-50'}`}>
-      <span className={`self-end text-sm ${isCurrentMonth ? 'text-gray-600' : 'text-gray-400'}`}>
-        {format(day, 'd')}
+    <div
+      className={`border-t border-r border-gray-100 p-2 flex flex-col h-full ${
+        isCurrentMonth ? "" : "bg-gray-50"
+      }`}
+    >
+      <span
+        className={`self-end text-sm ${
+          isCurrentMonth ? "text-gray-600" : "text-gray-400"
+        }`}
+      >
+        {format(day, "d")}
       </span>
       <div className="mt-1 space-y-1 overflow-y-auto">
-        {dayEvents.map(event => (
-            <div key={event.id} className="text-xs bg-gray-100 p-1 rounded-sm">
-              {event.title}
-            </div>
+        {dayEvents.map((event) => (
+          <div
+            key={event.id}
+            className="text-xs bg-sakura-pink/25 text-gray-700 p-1 rounded-sm border border-sakura-pink/40"
+          >
+            {event.title}
+          </div>
         ))}
       </div>
     </div>
   );
 };
 
-export const MonthlyView: React.FC<MonthlyViewProps> = ({ date, events, logo }) => {
+export const MonthlyView: React.FC<MonthlyViewProps> = ({
+  date,
+  events,
+  logo,
+}) => {
   const monthStart = startOfMonth(date);
   const monthEnd = endOfMonth(date);
   const startDate = startOfWeek(monthStart);
   const endDate = endOfWeek(monthEnd);
-  
+
   const days = eachDayOfInterval({ start: startDate, end: endDate });
-  const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   return (
     <div className="flex flex-col flex-grow">
-      <div className="flex items-center justify-between mb-2">
+      <div className="flex items-center justify-between mb-2 pb-2 border-b border-sakura-pink/40">
         <div className="flex items-baseline gap-2">
-          <h2 className="text-xl font-light text-gray-800 tracking-wide">{format(date, 'MMMM')}</h2>
-          <h3 className="text-xl font-light text-gray-400">{format(date, 'yyyy')}</h3>
+          <h2 className="text-xl font-light text-gray-800 tracking-wide">
+            {format(date, "MMMM")}
+          </h2>
+          <h3 className="text-xl font-light text-gray-400">
+            {format(date, "yyyy")}
+          </h3>
         </div>
         {logo && (
-            <img src={logo} alt="Logo" className="max-h-8 object-contain" />
+          <img src={logo} alt="Logo" className="max-h-8 object-contain" />
         )}
       </div>
       <div className="grid grid-cols-7 flex-grow">
-        {weekdays.map(day => (
-          <div key={day} className="text-center text-sm font-semibold text-muted py-2 border-b-2 border-gray-100">
+        {weekdays.map((day) => (
+          <div
+            key={day}
+            className="text-center text-sm font-semibold text-muted py-2 border-b-2 border-sakura-pink/50"
+          >
             {day}
           </div>
         ))}
         {days.map((day) => (
-          <DayCell 
-            key={day.toString()} 
+          <DayCell
+            key={day.toString()}
             day={day}
             isCurrentMonth={isSameMonth(day, date)}
             events={events}
