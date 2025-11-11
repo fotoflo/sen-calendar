@@ -64,14 +64,14 @@ export const WeeklyView: React.FC<WeeklyViewProps> = ({ date, events, layout }) 
       </div>
       
       <div className="grid grid-rows-2 flex-grow border border-gray-200">
-        <div className={`grid ${topRowCols} border-b border-gray-200`}>
+        <div className={`grid ${topRowCols} border-b border-gray-200 h-full`}>
           {topRowDays.map((day, index) => (
             <div key={day.toString()} className={`h-full ${index < topRowDays.length - 1 ? 'border-r border-gray-200' : ''}`}>
               <DayBox day={day} events={events} />
             </div>
           ))}
         </div>
-        <div className={`grid ${bottomRowCols}`}>
+        <div className={`grid ${bottomRowCols} h-full`}>
           {bottomRowDays.map((day, index) => (
             <div key={day.toString()} className={`h-full ${index < bottomRowDays.length - 1 ? 'border-r border-gray-200' : ''}`}>
               <DayBox day={day} events={events} />

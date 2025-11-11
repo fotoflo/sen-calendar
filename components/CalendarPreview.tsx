@@ -31,7 +31,7 @@ export const CalendarPreview: React.FC<CalendarPreviewProps> = ({
         return (
           <div 
             key={i}
-            className={`printable-calendar-page relative bg-paper-white rounded-sm p-8 md:p-12 flex flex-col ${viewType} ${paperSize}`}
+            className={`printable-calendar-page relative bg-paper-white rounded-sm p-12 flex flex-col ${viewType} ${paperSize}`}
           >
             {viewType === 'monthly' ? (
               <MonthlyView date={pageDate} events={events} />
@@ -40,7 +40,7 @@ export const CalendarPreview: React.FC<CalendarPreviewProps> = ({
             )}
 
             {logo && (
-              <div className="absolute bottom-8 right-8 md:bottom-12 md:right-12 z-20">
+              <div className="absolute bottom-12 right-12 z-20">
                 <img src={logo} alt="Logo" className="max-h-12 max-w-xs object-contain" />
               </div>
             )}
