@@ -63,15 +63,15 @@ export const WeeklyView: React.FC<WeeklyViewProps> = ({ date, events, layout }) 
         <h3 className="text-3xl font-light text-gray-400">{format(date, 'yyyy')}</h3>
       </div>
       
-      <div className="grid grid-rows-2 flex-grow border border-gray-200">
-        <div className={`grid ${topRowCols} border-b border-gray-200`}>
+      <div className="flex flex-col flex-grow border border-gray-200">
+        <div className={`grid ${topRowCols} border-b border-gray-200 flex-1`}>
           {topRowDays.map((day, index) => (
             <div key={day.toString()} className={index < topRowDays.length - 1 ? 'border-r border-gray-200' : ''}>
               <DayBox day={day} events={events} />
             </div>
           ))}
         </div>
-        <div className={`grid ${bottomRowCols}`}>
+        <div className={`grid ${bottomRowCols} flex-1`}>
           {bottomRowDays.map((day, index) => (
             <div key={day.toString()} className={index < bottomRowDays.length - 1 ? 'border-r border-gray-200' : ''}>
               <DayBox day={day} events={events} />
