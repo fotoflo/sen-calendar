@@ -76,7 +76,7 @@ const App: React.FC = () => {
       setLogo(savedLogo);
     } else {
       // Set default logo if no saved logo exists
-      setLogo('/default-logo.png'); // Place your logo file in the public directory
+      setLogo('/sen-studio-logo.png'); // Use Sen Studio logo as default
     }
     const savedUrl = localStorage.getItem(CALENDAR_URL_STORAGE_KEY);
     if (savedUrl) {

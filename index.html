@@ -2,35 +2,42 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📅</text></svg>">
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📅</text></svg>"
+    />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Muji-Style Printable Calendar</title>
+    <title>森STUDIO Calendar</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <script src="https://cdn.jsdelivr.net/npm/ical-expander@3.1.0/build/ical-expander.min.js"></script>
     <script>
       tailwind.config = {
         theme: {
           extend: {
             fontFamily: {
-              sans: ['Inter', 'sans-serif'],
+              sans: ["Inter", "sans-serif"],
             },
             colors: {
-              'paper-white': '#fdfdfd',
-              'muted': '#888888',
-              'lipstick-red': '#d93a4a',
-            }
-          }
-        }
-      }
+              "paper-white": "#fdfdfd",
+              muted: "#888888",
+              "lipstick-red": "#d93a4a",
+            },
+          },
+        },
+      };
     </script>
     <style>
       /* Screen-only styles for simulating paper */
       @media screen {
         .printable-calendar-page {
-          box-shadow: 0 4px 6px rgba(0,0,0,0.05), 0 10px 20px rgba(0,0,0,0.05);
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05),
+            0 10px 20px rgba(0, 0, 0, 0.05);
         }
         .printable-calendar-page.a4 {
           width: min(90vw, 1122px); /* 297mm at 96dpi is approx 1122px */
@@ -44,14 +51,18 @@
 
       @media print {
         @page {
-            size: landscape;
-            margin: 0;
+          size: landscape;
+          margin: 0;
         }
-        
-        html, body, #root, main, #preview-container {
-            height: 100%;
-            margin: 0;
-            padding: 0;
+
+        html,
+        body,
+        #root,
+        main,
+        #preview-container {
+          height: 100%;
+          margin: 0;
+          padding: 0;
         }
 
         body {
@@ -59,7 +70,8 @@
           print-color-adjust: exact;
           background-color: white !important;
         }
-        header, #settings-modal-overlay {
+        header,
+        #settings-modal-overlay {
           display: none !important;
         }
         main {
@@ -84,7 +96,7 @@
           min-height: 100vh !important; /* Changed from height: 100% */
           display: flex !important;
           flex-direction: column !important;
-          
+
           /* Reset screen styles */
           aspect-ratio: auto !important;
           box-shadow: none !important;
@@ -100,13 +112,14 @@
         }
 
         .printable-calendar-page:last-of-type {
-            break-after: auto;
-            page-break-after: auto;
+          break-after: auto;
+          page-break-after: auto;
         }
 
         /* Remove gray colors and internal borders */
-        .printable-calendar-page .bg-gray-50, .printable-calendar-page .bg-gray-100 {
-            background-color: transparent !important;
+        .printable-calendar-page .bg-gray-50,
+        .printable-calendar-page .bg-gray-100 {
+          background-color: transparent !important;
         }
         /* Make borders visible for printing */
         .printable-calendar-page .border-gray-100,
@@ -115,27 +128,27 @@
         .printable-calendar-page .border-r,
         .printable-calendar-page .border-b,
         .printable-calendar-page .border-b-2 {
-            border-color: #bbb !important;
+          border-color: #bbb !important;
         }
         .printable-calendar-page .text-muted {
-            color: #444 !important; /* Make muted text darker for print */
+          color: #444 !important; /* Make muted text darker for print */
         }
         .printable-calendar-page .text-gray-400 {
-            color: #666 !important;
+          color: #666 !important;
         }
       }
     </style>
-  <script type="importmap">
-{
-  "imports": {
-    "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "react": "https://aistudiocdn.com/react@^19.2.0",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "date-fns": "https://aistudiocdn.com/date-fns@^4.1.0"
-  }
-}
-</script>
-</head>
+    <script type="importmap">
+      {
+        "imports": {
+          "react/": "https://aistudiocdn.com/react@^19.2.0/",
+          "react": "https://aistudiocdn.com/react@^19.2.0",
+          "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+          "date-fns": "https://aistudiocdn.com/date-fns@^4.1.0"
+        }
+      }
+    </script>
+  </head>
   <body class="bg-gray-100">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
