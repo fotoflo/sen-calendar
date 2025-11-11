@@ -39,11 +39,11 @@ const DayCell: React.FC<{ day: Date; isCurrentMonth: boolean; events: CalendarEv
 export const MonthlyView: React.FC<MonthlyViewProps> = ({ date, events }) => {
   const monthStart = startOfMonth(date);
   const monthEnd = endOfMonth(date);
-  const startDate = startOfWeek(monthStart);
-  const endDate = endOfWeek(monthEnd);
+  const startDate = startOfWeek(monthStart, { weekStartsOn: 1 });
+  const endDate = endOfWeek(monthEnd, { weekStartsOn: 1 });
   
   const days = eachDayOfInterval({ start: startDate, end: endDate });
-  const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
   return (
     <div className="flex flex-col flex-grow">
