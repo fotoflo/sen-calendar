@@ -26,7 +26,7 @@ const DayBox: React.FC<{ day: Date, events: CalendarEvent[] }> = ({ day, events 
           {format(day, 'd')}
         </p>
       </div>
-      <div className="mt-1 space-y-2 overflow-y-auto flex-grow border-t border-gray-100 pt-2">
+      <div className="mt-1 space-y-2 overflow-y-auto flex-grow border-t border-gray-200 pt-2">
          {dayEvents.map(event => (
             <div key={event.id} className="text-xs bg-gray-100 p-2 rounded-md">
               <p className="font-semibold">{event.title}</p>
@@ -69,17 +69,17 @@ export const WeeklyView: React.FC<WeeklyViewProps> = ({ date, events, layout, lo
         )}
       </div>
       
-      <div className="grid grid-rows-2 flex-grow border border-gray-200">
-        <div className={`grid ${topRowCols} border-b border-gray-200 h-full`}>
+      <div className="flex flex-col flex-grow border border-gray-400">
+        <div className={`grid ${topRowCols} border-b border-gray-400 flex-1`}>
           {topRowDays.map((day, index) => (
-            <div key={day.toString()} className={`h-full ${index < topRowDays.length - 1 ? 'border-r border-gray-200' : ''}`}>
+            <div key={day.toString()} className={`h-full ${index < topRowDays.length - 1 ? 'border-r border-gray-400' : ''}`}>
               <DayBox day={day} events={events} />
             </div>
           ))}
         </div>
-        <div className={`grid ${bottomRowCols} h-full`}>
+        <div className={`grid ${bottomRowCols} flex-1`}>
           {bottomRowDays.map((day, index) => (
-            <div key={day.toString()} className={`h-full ${index < bottomRowDays.length - 1 ? 'border-r border-gray-200' : ''}`}>
+            <div key={day.toString()} className={`h-full ${index < bottomRowDays.length - 1 ? 'border-r border-gray-400' : ''}`}>
               <DayBox day={day} events={events} />
             </div>
           ))}
