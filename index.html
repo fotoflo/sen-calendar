@@ -33,18 +33,18 @@
           box-shadow: 0 4px 6px rgba(0,0,0,0.05), 0 10px 20px rgba(0,0,0,0.05);
         }
         .printable-calendar-page.a4 {
-          width: min(90vw, 1123px); /* 297mm at 96dpi is approx 1123px */
-          aspect-ratio: 297 / 210;
+          width: min(90vw, 794px); /* 210mm at 96dpi is approx 794px */
+          aspect-ratio: 210 / 297;
         }
         .printable-calendar-page.letter {
-          width: min(90vw, 1056px); /* 11in at 96dpi is 1056px */
-          aspect-ratio: 11 / 8.5;
+          width: min(90vw, 816px); /* 8.5in at 96dpi is 816px */
+          aspect-ratio: 8.5 / 11;
         }
       }
 
       @media print {
         @page {
-            size: landscape;
+            size: portrait;
             margin: 0;
         }
         
@@ -107,13 +107,14 @@
         .printable-calendar-page .bg-gray-50, .printable-calendar-page .bg-gray-100 {
             background-color: transparent !important;
         }
+        /* Make borders visible for printing */
         .printable-calendar-page .border-gray-100,
         .printable-calendar-page .border-gray-200,
         .printable-calendar-page .border-t,
         .printable-calendar-page .border-r,
         .printable-calendar-page .border-b,
         .printable-calendar-page .border-b-2 {
-            border-color: transparent !important;
+            border-color: #bbb !important;
         }
         .printable-calendar-page .text-muted {
             color: #444 !important; /* Make muted text darker for print */
