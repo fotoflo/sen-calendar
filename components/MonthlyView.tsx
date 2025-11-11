@@ -22,11 +22,11 @@ const DayCell: React.FC<{ day: Date; isCurrentMonth: boolean; events: CalendarEv
   const dayEvents = events.filter(event => isSameDay(event.start, day));
 
   return (
-    <div className={`border-t border-r border-gray-100 p-2 flex flex-col h-full ${isCurrentMonth ? '' : 'bg-gray-50'}`}>
+    <div className={`border-t border-r border-gray-100 p-2 flex flex-col min-h-0 h-full ${isCurrentMonth ? '' : 'bg-gray-50'}`}>
       <span className={`self-end text-sm ${isCurrentMonth ? 'text-gray-600' : 'text-gray-400'}`}>
         {format(day, 'd')}
       </span>
-      <div className="mt-1 space-y-1 overflow-y-auto">
+      <div className="mt-1 space-y-1 overflow-y-auto flex-1 min-h-0">
         {dayEvents.map(event => (
             <div key={event.id} className="text-xs bg-gray-100 p-1 rounded-sm">
               {event.title}
@@ -45,19 +45,22 @@ export const MonthlyView: React.FC<MonthlyViewProps> = ({ date, events, logo }) 
   
   const days = eachDayOfInterval({ start: startDate, end: endDate });
   const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const totalDisplayDays = days.length;
+  const weekCount = Math.ceil(totalDisplayDays / 7);
+  const gridTemplateRows = `auto repeat(${weekCount}, minmax(0, 1fr))`;
 
   return (
-    <div className="flex flex-col flex-grow">
+    <div className="flex flex-col flex-grow min-h-0">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-baseline gap-2">
           <h2 className="text-xl font-light text-gray-800 tracking-wide">{format(date, 'MMMM')}</h2>
           <h3 className="text-xl font-light text-gray-400">{format(date, 'yyyy')}</h3>
         </div>
         {logo && (
-            <img src={logo} alt="Logo" className="max-h-8 object-contain" />
+          <img src={logo} alt="Logo" className="max-h-8 object-contain" />
         )}
       </div>
-      <div className="grid grid-cols-7 flex-grow">
+      <div className="grid grid-cols-7 flex-grow min-h-0" style={{ gridTemplateRows }}>
         {weekdays.map(day => (
           <div key={day} className="text-center text-sm font-semibold text-muted py-2 border-b-2 border-gray-100">
             {day}
