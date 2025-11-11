@@ -12,7 +12,7 @@ const LOGO_STORAGE_KEY = 'printableCalendarLogo';
 const CALENDAR_URL_STORAGE_KEY = 'printableCalendarUrl';
 
 const App: React.FC = () => {
-  const [viewType, setViewType] = useState<ViewType>('monthly');
+  const [viewType, setViewType] = useState<ViewType>('weekly');
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [printRange, setPrintRange] = useState<number>(1);
   const [logo, setLogo] = useState<string | null>(null);
