@@ -50,7 +50,7 @@ export const MonthlyView: React.FC<MonthlyViewProps> = ({ date, events, logo }) 
   const gridTemplateRows = `auto repeat(${weekCount}, minmax(0, 1fr))`;
 
   return (
-    <div className="flex flex-col flex-grow min-h-0">
+    <div className="flex flex-col flex-1 min-h-0 h-full">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-baseline gap-2">
           <h2 className="text-xl font-light text-gray-800 tracking-wide">{format(date, 'MMMM')}</h2>
@@ -60,20 +60,22 @@ export const MonthlyView: React.FC<MonthlyViewProps> = ({ date, events, logo }) 
           <img src={logo} alt="Logo" className="max-h-8 object-contain" />
         )}
       </div>
-      <div className="grid grid-cols-7 flex-grow min-h-0" style={{ gridTemplateRows }}>
-        {weekdays.map(day => (
-          <div key={day} className="text-center text-sm font-semibold text-muted py-2 border-b-2 border-gray-100">
-            {day}
-          </div>
-        ))}
-        {days.map((day) => (
-          <DayCell 
-            key={day.toString()} 
-            day={day}
-            isCurrentMonth={isSameMonth(day, date)}
-            events={events}
-          />
-        ))}
+      <div className="flex-1 min-h-0">
+        <div className="grid grid-cols-7 h-full min-h-0" style={{ gridTemplateRows }}>
+          {weekdays.map(day => (
+            <div key={day} className="text-center text-sm font-semibold text-muted py-2 border-b-2 border-gray-100">
+              {day}
+            </div>
+          ))}
+          {days.map((day) => (
+            <DayCell 
+              key={day.toString()} 
+              day={day}
+              isCurrentMonth={isSameMonth(day, date)}
+              events={events}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
