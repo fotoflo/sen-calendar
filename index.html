@@ -28,6 +28,23 @@
     </script>
     <style>
       @media print {
+        @page monthly-a4 {
+            size: A4 landscape;
+            margin: 0.5in;
+        }
+        @page weekly-a4 {
+            size: A4 portrait;
+            margin: 0.5in;
+        }
+        @page monthly-letter {
+            size: letter landscape;
+            margin: 0.5in;
+        }
+        @page weekly-letter {
+            size: letter portrait;
+            margin: 0.5in;
+        }
+
         body {
           -webkit-print-color-adjust: exact;
           print-color-adjust: exact;
@@ -47,14 +64,23 @@
           border: none !important;
         }
         .printable-calendar-page {
+          width: 100% !important;
+          height: 100% !important;
           box-shadow: none !important;
+          border: none !important;
+          margin: 0 !important;
+          transform: none !important;
           break-after: page;
           page-break-after: always;
-          position: absolute;
-          top: 0;
-          left: 0;
-          border: none !important;
+          position: static !important;
+          top: auto !important;
+          left: auto !important;
         }
+        
+        .printable-calendar-page.monthly.a4 { page: monthly-a4; }
+        .printable-calendar-page.weekly.a4 { page: weekly-a4; }
+        .printable-calendar-page.monthly.letter { page: monthly-letter; }
+        .printable-calendar-page.weekly.letter { page: weekly-letter; }
 
         /* Remove gray colors and internal borders */
         .printable-calendar-page .bg-gray-50, .printable-calendar-page .bg-gray-100 {
@@ -73,20 +99,6 @@
         }
         .printable-calendar-page .text-gray-400 {
             color: #666 !important;
-        }
-
-        .view-monthly .printable-calendar-page {
-            width: calc(100% / 0.9);
-            height: calc(100% / 0.9);
-            transform: scale(0.9);
-            transform-origin: top left;
-        }
-
-        .view-weekly .printable-calendar-page {
-            width: calc(100% / 1.8);
-            height: calc(100% / 1.8);
-            transform: scale(1.8);
-            transform-origin: top left;
         }
       }
     </style>

@@ -42,8 +42,6 @@ export const WeeklyView: React.FC<WeeklyViewProps> = ({ date, events }) => {
   const weekEnd = endOfWeek(date);
   
   const days = eachDayOfInterval({ start: weekStart, end: weekEnd });
-  const topRowDays = days.slice(0, 3);
-  const bottomRowDays = days.slice(3, 7);
 
   return (
     <div className="flex flex-col flex-grow">
@@ -54,21 +52,12 @@ export const WeeklyView: React.FC<WeeklyViewProps> = ({ date, events }) => {
         <h3 className="text-3xl font-light text-gray-400">{format(date, 'yyyy')}</h3>
       </div>
       
-      <div className="grid grid-rows-2 flex-grow border border-gray-200">
-        <div className="grid grid-cols-3 border-b border-gray-200">
-          {topRowDays.map((day, index) => (
-            <div key={day.toString()} className={index < 2 ? 'border-r border-gray-200' : ''}>
-              <DayBox day={day} events={events} />
-            </div>
-          ))}
-        </div>
-        <div className="grid grid-cols-4">
-          {bottomRowDays.map((day, index) => (
-            <div key={day.toString()} className={index < 3 ? 'border-r border-gray-200' : ''}>
-              <DayBox day={day} events={events} />
-            </div>
-          ))}
-        </div>
+      <div className="grid grid-cols-7 flex-grow border border-gray-200">
+        {days.map((day, index) => (
+          <div key={day.toString()} className={index < 6 ? 'border-r border-gray-200' : ''}>
+            <DayBox day={day} events={events} />
+          </div>
+        ))}
       </div>
     </div>
   );

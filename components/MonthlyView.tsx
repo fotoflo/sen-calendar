@@ -21,7 +21,7 @@ const DayCell: React.FC<{ day: Date; isCurrentMonth: boolean; events: CalendarEv
   const dayEvents = events.filter(event => isSameDay(event.start, day));
 
   return (
-    <div className={`border-t border-r border-gray-100 p-2 flex flex-col h-full min-h-[120px] ${isCurrentMonth ? '' : 'bg-gray-50'}`}>
+    <div className={`border-t border-r border-gray-100 p-2 flex flex-col h-full ${isCurrentMonth ? '' : 'bg-gray-50'}`}>
       <span className={`self-end text-sm ${isCurrentMonth ? 'text-gray-600' : 'text-gray-400'}`}>
         {format(day, 'd')}
       </span>

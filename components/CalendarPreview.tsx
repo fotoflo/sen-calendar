@@ -13,6 +13,17 @@ interface CalendarPreviewProps {
   paperSize: PaperSize;
 }
 
+const paperStyles: Record<PaperSize, { portrait: string; landscape: string }> = {
+  a4: {
+    portrait: '210 / 297',
+    landscape: '297 / 210',
+  },
+  letter: {
+    portrait: '8.5 / 11',
+    landscape: '11 / 8.5',
+  },
+};
+
 export const CalendarPreview: React.FC<CalendarPreviewProps> = ({
   viewType,
   startDate,
@@ -22,19 +33,30 @@ export const CalendarPreview: React.FC<CalendarPreviewProps> = ({
   addDate,
   paperSize,
 }) => {
+  const orientation = viewType === 'monthly' ? 'landscape' : 'portrait';
+  const aspectRatio = paperStyles[paperSize][orientation];
+
+  const pageStyle: React.CSSProperties = {
+    boxShadow: '0 4px 6px rgba(0,0,0,0.05), 0 10px 20px rgba(0,0,0,0.05)',
+    aspectRatio,
+  };
+
+  if (orientation === 'landscape') {
+    pageStyle.width = 'min(90vw, 1123px)';
+  } else { // portrait
+    pageStyle.width = `calc(min(85vh, 1056px) * ${aspectRatio})`;
+    pageStyle.maxWidth = '90vw';
+  }
+
   return (
-    <div id="preview-container" className="space-y-8">
+    <div id="preview-container" className="space-y-8 flex flex-col items-center">
       {[...Array(printRange).keys()].map((i) => {
         const pageDate = addDate(startDate, i);
         return (
           <div 
             key={i}
-            className={`printable-calendar-page relative bg-paper-white shadow-lg rounded-sm w-full max-w-4xl mx-auto p-8 md:p-12 flex flex-col ${
-              paperSize === 'a4' ? 'aspect-[1.414/1]' : 'aspect-[11/8.5]'
-            }`}
-            style={{
-                boxShadow: '0 4px 6px rgba(0,0,0,0.05), 0 10px 20px rgba(0,0,0,0.05)'
-            }}
+            className={`printable-calendar-page relative bg-paper-white shadow-lg rounded-sm p-8 md:p-12 flex flex-col ${viewType} ${paperSize}`}
+            style={pageStyle}
           >
             {viewType === 'monthly' ? (
               <MonthlyView date={pageDate} events={events} />
