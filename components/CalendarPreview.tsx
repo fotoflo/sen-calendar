@@ -1,7 +1,7 @@
 import React from 'react';
 import { MonthlyView } from './MonthlyView';
 import { WeeklyView } from './WeeklyView';
-import { ViewType, CalendarEvent, PaperSize } from '../types';
+import { ViewType, CalendarEvent, PaperSize, WeeklyLayout } from '../types';
 
 interface CalendarPreviewProps {
   viewType: ViewType;
@@ -11,18 +11,8 @@ interface CalendarPreviewProps {
   events: CalendarEvent[];
   addDate: (date: Date, amount: number) => Date;
   paperSize: PaperSize;
+  weeklyLayout: WeeklyLayout;
 }
-
-const paperStyles: Record<PaperSize, { portrait: string; landscape: string }> = {
-  a4: {
-    portrait: '210 / 297',
-    landscape: '297 / 210',
-  },
-  letter: {
-    portrait: '8.5 / 11',
-    landscape: '11 / 8.5',
-  },
-};
 
 export const CalendarPreview: React.FC<CalendarPreviewProps> = ({
   viewType,
@@ -32,16 +22,8 @@ export const CalendarPreview: React.FC<CalendarPreviewProps> = ({
   events,
   addDate,
   paperSize,
+  weeklyLayout,
 }) => {
-  const orientation = 'landscape';
-  const aspectRatio = paperStyles[paperSize][orientation];
-
-  const pageStyle: React.CSSProperties = {
-    boxShadow: '0 4px 6px rgba(0,0,0,0.05), 0 10px 20px rgba(0,0,0,0.05)',
-    aspectRatio,
-    width: 'min(90vw, 1123px)',
-  };
-
   return (
     <div id="preview-container" className="space-y-8 flex flex-col items-center">
       {[...Array(printRange).keys()].map((i) => {
@@ -49,13 +31,12 @@ export const CalendarPreview: React.FC<CalendarPreviewProps> = ({
         return (
           <div 
             key={i}
-            className={`printable-calendar-page relative bg-paper-white shadow-lg rounded-sm p-8 md:p-12 flex flex-col ${viewType} ${paperSize}`}
-            style={pageStyle}
+            className={`printable-calendar-page relative bg-paper-white rounded-sm p-8 md:p-12 flex flex-col ${viewType} ${paperSize}`}
           >
             {viewType === 'monthly' ? (
               <MonthlyView date={pageDate} events={events} />
             ) : (
-              <WeeklyView date={pageDate} events={events} />
+              <WeeklyView date={pageDate} events={events} layout={weeklyLayout} />
             )}
 
             {logo && (

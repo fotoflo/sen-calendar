@@ -3,7 +3,7 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { addMonths, addWeeks } from 'date-fns';
 import { ControlPanel } from './components/ControlPanel';
 import { CalendarPreview } from './components/CalendarPreview';
-import { ViewType, CalendarEvent, PaperSize } from './types';
+import { ViewType, CalendarEvent, PaperSize, WeeklyLayout } from './types';
 import { MOCK_EVENTS, ICONS } from './constants';
 
 declare const IcalExpander: any;
@@ -22,6 +22,7 @@ const App: React.FC = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
   const [calendarUrl, setCalendarUrl] = useState('');
   const [paperSize, setPaperSize] = useState<PaperSize>('a4');
+  const [weeklyLayout, setWeeklyLayout] = useState<WeeklyLayout>('weekdayFocus');
   
   const handleConnectCalendar = useCallback(async (url: string) => {
     if (!url) return;
@@ -155,6 +156,27 @@ const App: React.FC = () => {
             ))}
           </div>
 
+          {viewType === 'weekly' && (
+            <div className="flex items-center bg-gray-200 rounded-lg p-0.5">
+              <button
+                onClick={() => setWeeklyLayout('weekdayFocus')}
+                className={`p-1.5 rounded-md transition-colors ${weeklyLayout === 'weekdayFocus' ? 'bg-white shadow-sm' : 'bg-transparent text-gray-600 hover:text-gray-900'}`}
+                aria-label="Weekday Focus Layout"
+                title="Weekday Focus Layout (3 days on top)"
+              >
+                <span className="text-base" role="img" aria-label="target">🎯</span>
+              </button>
+              <button
+                onClick={() => setWeeklyLayout('weekendFocus')}
+                className={`p-1.5 rounded-md transition-colors ${weeklyLayout === 'weekendFocus' ? 'bg-white shadow-sm' : 'bg-transparent text-gray-600 hover:text-gray-900'}`}
+                aria-label="Weekend Focus Layout"
+                title="Weekend Focus Layout (4 days on top)"
+              >
+                <span className="text-base" role="img" aria-label="island">🏝️</span>
+              </button>
+            </div>
+          )}
+
           <div className="relative">
             <select
               value={printRange}
@@ -223,7 +245,7 @@ const App: React.FC = () => {
 
       <main className={`px-4 pb-4 md:px-8 md:pb-8 view-${viewType}`}>
         <CalendarPreview
-          key={`${viewType}-${startDate.toISOString()}-${printRange}-${logo}-${isCalendarConnected}-${paperSize}`}
+          key={`${viewType}-${startDate.toISOString()}-${printRange}-${logo}-${isCalendarConnected}-${paperSize}-${weeklyLayout}`}
           viewType={viewType}
           startDate={startDate}
           printRange={printRange}
@@ -231,6 +253,7 @@ const App: React.FC = () => {
           events={calendarEvents}
           addDate={addDate}
           paperSize={paperSize}
+          weeklyLayout={weeklyLayout}
         />
       </main>
     </div>

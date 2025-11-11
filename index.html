@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📅</text></svg>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Muji-Style Printable Calendar</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -27,22 +27,31 @@
       }
     </script>
     <style>
+      /* Screen-only styles for simulating paper */
+      @media screen {
+        .printable-calendar-page {
+          box-shadow: 0 4px 6px rgba(0,0,0,0.05), 0 10px 20px rgba(0,0,0,0.05);
+        }
+        .printable-calendar-page.a4 {
+          width: min(90vw, 1123px); /* 297mm at 96dpi is approx 1123px */
+          aspect-ratio: 297 / 210;
+        }
+        .printable-calendar-page.letter {
+          width: min(90vw, 1056px); /* 11in at 96dpi is 1056px */
+          aspect-ratio: 11 / 8.5;
+        }
+      }
+
       @media print {
-        @page monthly-a4 {
-            size: A4 landscape;
+        @page {
+            size: landscape;
             margin: 0.5in;
         }
-        @page weekly-a4 {
-            size: A4 landscape;
-            margin: 0.5in;
-        }
-        @page monthly-letter {
-            size: letter landscape;
-            margin: 0.5in;
-        }
-        @page weekly-letter {
-            size: letter landscape;
-            margin: 0.5in;
+        
+        html, body, #root, main, #preview-container {
+            height: 100%;
+            margin: 0;
+            padding: 0;
         }
 
         body {
@@ -58,29 +67,41 @@
           margin: 0 !important;
         }
         #preview-container {
-          margin: 0 !important;
-          padding: 0 !important;
           box-shadow: none !important;
           border: none !important;
         }
+
+        /* Remove space-y-* effect from container */
+        #preview-container > * + * {
+          margin-top: 0 !important;
+        }
+
         .printable-calendar-page {
+          /* Sizing & Layout */
+          box-sizing: border-box !important;
           width: 100% !important;
           height: 100% !important;
+          display: flex !important;
+          flex-direction: column !important;
+          
+          /* Reset screen styles */
+          aspect-ratio: auto !important;
           box-shadow: none !important;
           border: none !important;
           margin: 0 !important;
           transform: none !important;
+
+          /* Page break control */
           break-after: page;
           page-break-after: always;
-          position: static !important;
-          top: auto !important;
-          left: auto !important;
+          overflow: hidden !important; /* Clip any potential overflow */
+          page-break-inside: avoid !important;
         }
-        
-        .printable-calendar-page.monthly.a4 { page: monthly-a4; }
-        .printable-calendar-page.weekly.a4 { page: weekly-a4; }
-        .printable-calendar-page.monthly.letter { page: monthly-letter; }
-        .printable-calendar-page.weekly.letter { page: weekly-letter; }
+
+        .printable-calendar-page:last-of-type {
+            break-after: auto;
+            page-break-after: auto;
+        }
 
         /* Remove gray colors and internal borders */
         .printable-calendar-page .bg-gray-50, .printable-calendar-page .bg-gray-100 {

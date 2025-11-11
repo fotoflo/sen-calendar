@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   format,
   startOfWeek,
@@ -6,14 +6,13 @@ import {
   eachDayOfInterval,
   isSameDay
 } from 'date-fns';
-import { CalendarEvent } from '../types';
+import { CalendarEvent, WeeklyLayout } from '../types';
 
 interface WeeklyViewProps {
   date: Date;
   events: CalendarEvent[];
+  layout: WeeklyLayout;
 }
-
-type WeeklyLayout = 'weekdayFocus' | 'weekendFocus';
 
 const DayBox: React.FC<{ day: Date, events: CalendarEvent[] }> = ({ day, events }) => {
   const dayEvents = events.filter(event => isSameDay(event.start, day));
@@ -40,9 +39,7 @@ const DayBox: React.FC<{ day: Date, events: CalendarEvent[] }> = ({ day, events 
   );
 };
 
-export const WeeklyView: React.FC<WeeklyViewProps> = ({ date, events }) => {
-  const [layout, setLayout] = useState<WeeklyLayout>('weekdayFocus');
-
+export const WeeklyView: React.FC<WeeklyViewProps> = ({ date, events, layout }) => {
   const weekStart = startOfWeek(date, { weekStartsOn: 1 });
   const weekEnd = endOfWeek(date, { weekStartsOn: 1 });
   
@@ -63,27 +60,7 @@ export const WeeklyView: React.FC<WeeklyViewProps> = ({ date, events }) => {
         <h2 className="text-3xl font-light text-gray-800 tracking-wide">
           Week of {format(weekStart, 'MMMM d')}
         </h2>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center bg-gray-100 rounded-lg p-0.5 text-lg">
-            <button
-              onClick={() => setLayout('weekdayFocus')}
-              className={`px-2 py-0.5 rounded-md transition-all ${layout === 'weekdayFocus' ? 'bg-white shadow-sm' : 'opacity-50 hover:opacity-100'}`}
-              aria-label="Weekday Focus Layout"
-              title="Weekday Focus Layout (3 days on top)"
-            >
-              🎯
-            </button>
-            <button
-              onClick={() => setLayout('weekendFocus')}
-              className={`px-2 py-0.5 rounded-md transition-all ${layout === 'weekendFocus' ? 'bg-white shadow-sm' : 'opacity-50 hover:opacity-100'}`}
-              aria-label="Weekend Focus Layout"
-              title="Weekend Focus Layout (4 days on top)"
-            >
-              🏝️
-            </button>
-          </div>
-          <h3 className="text-3xl font-light text-gray-400">{format(date, 'yyyy')}</h3>
-        </div>
+        <h3 className="text-3xl font-light text-gray-400">{format(date, 'yyyy')}</h3>
       </div>
       
       <div className="grid grid-rows-2 flex-grow border border-gray-200">
